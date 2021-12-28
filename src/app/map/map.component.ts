@@ -48,6 +48,11 @@ export class MapComponent implements AfterViewInit {
 
     tiles.addTo(this.map);
 
+    this.map.on('zoomend', () => {
+      console.log(this.map?.getZoom());
+      console.log(this.map?.getMaxZoom());
+    });
+
     // this.initMarker(this.map);
 
     // fakeVehicles(this.map);
@@ -58,6 +63,19 @@ export class MapComponent implements AfterViewInit {
     this.markerService.makePOIsMarkers(this.map);
     this.markerService.makeParkingsMarkers(this.map);
   }
+
+  initMapEvents = (map: L.Map): void => {
+    this.map?.on('zoomend', () => {
+      console.log(map.getZoom());
+      console.log(map.getMaxZoom());
+    });
+  };
+
+  initMarkers = (map: L.Map): void => {
+    this.markerService.makeVehiclesMarkers(map);
+    this.markerService.makePOIsMarkers(map);
+    this.markerService.makeParkingsMarkers(map);
+  };
 
   initMarker(map: L.Map): L.Marker {
     const userMarker = L.marker([39.8282, -98.5795]);
@@ -71,5 +89,6 @@ export class MapComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initMap();
+    // this.initMapEvents(this.map);
   }
 }
