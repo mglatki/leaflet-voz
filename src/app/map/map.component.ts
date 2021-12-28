@@ -1,31 +1,62 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Input } from '@angular/core';
 import * as L from 'leaflet';
+import { Observable } from 'rxjs';
+import { fakeVehicles } from '../helpers/helpers';
+import { MarkersService } from '../markers.service';
+import { Vehicle } from '../models/Vehicle';
+
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/marker-icon.png';
+const shadowUrl = 'assets/marker-shadow.png';
+const iconDefault = L.icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41],
+});
+L.Marker.prototype.options.icon = iconDefault;
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
-  styleUrls: ['./map.component.scss']
+  styleUrls: ['./map.component.scss'],
 })
-export class MapComponent  implements AfterViewInit {
+export class MapComponent implements AfterViewInit {
   private map: L.Map | undefined;
+  // vehicles$: Observable<VehiclesWrapper> | undefined;
+  // @Input() vehicles:<VehiclesWrapper>;
 
   private initMap(): void {
     this.map = L.map('map', {
-      center: [ 39.8282, -98.5795 ],
-      zoom: 3
+      center: [52.1935, 20.9304],
+      zoom: 3,
     });
 
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 18,
-      minZoom: 3,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    });
+    const tiles = L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        maxZoom: 18,
+        minZoom: 3,
+        attribution:
+          '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }
+    );
 
     tiles.addTo(this.map);
 
-    this.initMarker(this.map);
+    // this.initMarker(this.map);
 
-    this.addCustomMarkers(this.map);
+    // fakeVehicles(this.map);
+
+    // this.markerService.makeCapitalMarkers(this.map);
+    // this.vehicles$ = this.markerService.getVehiclesMarkers(this.map);
+    this.markerService.makeVehiclesMarkers(this.map);
+    this.markerService.makePOIsMarkers(this.map);
+    this.markerService.makeParkingsMarkers(this.map);
   }
 
   initMarker(map: L.Map): L.Marker {
@@ -36,27 +67,9 @@ export class MapComponent  implements AfterViewInit {
     return userMarker;
   }
 
-  addCustomMarkers(map: L.Map) : void {
-    const markers = new Array();
-
-    // for(let i = 0; i < markers.length; i++) {
-    //   markers.push(L.marker([(39 - i),(-98 - i)]).addTo(map));
-    // }
-
-    markers.push(L.marker([(39 - 1),(-98 - 1)]).addTo(map));
-    markers.push(L.marker([(39 - 2),(-98 - 2)]).addTo(map));
-    markers.push(L.marker([(39 - 3),(-98 - 3)]).addTo(map));
-    markers.push(L.marker([(39 - 4),(-98 - 4)]).addTo(map));
-    markers.push(L.marker([(39 - 5),(-98 - 5)]).addTo(map));
-
-
-    console.log(markers);
-  }
-
-  constructor() { }
+  constructor(private markerService: MarkersService) {}
 
   ngAfterViewInit(): void {
     this.initMap();
-   }
-
+  }
 }
