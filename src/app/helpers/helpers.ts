@@ -59,7 +59,9 @@ export function addCustomMarkers(
   map: L.Map
 ): void {
   markers.forEach((item) => {
-    L.marker([item.lat, item.lng]).addTo(map);
+    L.marker([item.lat, item.lng])
+      .addTo(map)
+      .bindPopup(`Lat ${item.lat}, lng ${item.lng}`);
   });
 
   // console.log(markers);
