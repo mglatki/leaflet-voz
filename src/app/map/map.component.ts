@@ -27,6 +27,8 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class MapComponent implements AfterViewInit {
   private map: L.Map | undefined;
+  markerClusterGroup: L.MarkerClusterGroup | undefined;
+  markerClusterData = [];
   // vehicles$: Observable<VehiclesWrapper> | undefined;
   // @Input() vehicles:<VehiclesWrapper>;
 
@@ -47,28 +49,6 @@ export class MapComponent implements AfterViewInit {
     );
 
     tiles.addTo(this.map);
-
-    this.map.on('zoomend', () => {
-      console.log(this.map?.getZoom());
-      console.log(this.map?.getMaxZoom());
-    });
-
-    // this.initMarker(this.map);
-
-    // fakeVehicles(this.map);
-
-    // this.markerService.makeCapitalMarkers(this.map);
-    // this.vehicles$ = this.markerService.getVehiclesMarkers(this.map);
-    // this.markerService.makeVehiclesMarkers(this.map);
-    // this.markerService.makePOIsMarkers(this.map);
-    // this.markerService.makeParkingsMarkers(this.map);
-  }
-
-  initMapEvents(map: L.Map): void {
-    this.map?.on('zoomend', () => {
-      console.log(map.getZoom());
-      console.log(map.getMaxZoom());
-    });
   }
 
   initMarkers(map: L.Map): void {
@@ -77,21 +57,14 @@ export class MapComponent implements AfterViewInit {
     this.markerService.makeParkingsMarkers(map);
   }
 
-  initMarker(map: L.Map): L.Marker {
-    const userMarker = L.marker([39.8282, -98.5795]);
-
-    userMarker.addTo(map);
-
-    return userMarker;
-  }
-
   constructor(private markerService: MarkersService) {}
 
   ngAfterViewInit(): void {
     this.initMap();
     if (this.map) {
-      this.initMapEvents(this.map);
-      this.initMarkers(this.map);
+      this.markerService.makePOIsClusterGroups(this.map);
+      // this.markerService.makeParkingsMarkersClusterGroups(this.map);
+      // this.markerService.makeVehiclesClusterGroups(this.map);
     }
   }
 }

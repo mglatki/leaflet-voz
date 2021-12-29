@@ -63,8 +63,61 @@ export function addCustomMarkers(
       .addTo(map)
       .bindPopup(`Lat ${item.lat}, lng ${item.lng}`);
   });
+}
 
-  // console.log(markers);
+export function addVehicleMarkersToClusterGroup(
+  veh: ReadonlyArray<Parking>,
+  map: L.Map
+) {
+  addCustomMarkersToClusterGroup(
+    veh.map((v) => {
+      return { lat: v.location.latitude, lng: v.location.longitude };
+    }),
+    map
+  );
+}
+
+export function addPOIMarkersToClusterGroup(
+  pois: ReadonlyArray<Parking>,
+  map: L.Map
+) {
+  addCustomMarkersToClusterGroup(
+    pois.map((p) => {
+      return { lat: p.location.latitude, lng: p.location.longitude };
+    }),
+    map
+  );
+}
+
+export function addParkingMarkersToClusterGroup(
+  parkings: ReadonlyArray<Parking>,
+  map: L.Map
+) {
+  addCustomMarkersToClusterGroup(
+    parkings.map((p) => {
+      return { lat: p.location.latitude, lng: p.location.longitude };
+    }),
+    map
+  );
+}
+
+export function addCustomMarkersToClusterGroup(
+  markers: Array<{ lat: number; lng: number }>,
+  // markerClusterGroup: L.MarkerClusterGroup,
+  map: L.Map
+): void {
+  const markerClusterGroup = L.markerClusterGroup({
+    removeOutsideVisibleBounds: true,
+  });
+
+  markers.forEach((item) => {
+    markerClusterGroup
+      .addLayer(L.marker([item.lat, item.lng]))
+      // .addTo(map)
+      .bindPopup(`Lat ${item.lat}, lng ${item.lng}`);
+  });
+
+  markerClusterGroup.addTo(map);
 }
 
 export function fakeVehicles(map: L.Map): void {

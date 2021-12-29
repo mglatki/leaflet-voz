@@ -4,8 +4,11 @@ import * as L from 'leaflet';
 import { Observable } from 'rxjs';
 import {
   addParkingMarkers,
+  addParkingMarkersToClusterGroup,
   addPOIMarkers,
+  addPOIMarkersToClusterGroup,
   addVehicleMarkers,
+  addVehicleMarkersToClusterGroup,
   VehiclesWrapper,
 } from './helpers/helpers';
 import { Vehicle } from './models/Vehicle';
@@ -25,9 +28,33 @@ export class MarkersService {
 
   constructor(private http: HttpClient) {}
 
+  makeVehiclesClusterGroups(map: L.Map): void {
+    this.getVehiclesMarkers().subscribe((data: VehiclesWrapper) => {
+      // console.log(data.objects);
+
+      addVehicleMarkersToClusterGroup(data.objects, map);
+    });
+  }
+
+  makePOIsClusterGroups(map: L.Map): void {
+    this.getParkingsMarkers().subscribe((data: VehiclesWrapper) => {
+      // console.log(data.objects);
+
+      addPOIMarkersToClusterGroup(data.objects, map);
+    });
+  }
+
+  makeParkingsMarkersClusterGroups(map: L.Map): void {
+    this.getPOIsMarkers().subscribe((data: VehiclesWrapper) => {
+      // console.log(data.objects);
+
+      addParkingMarkersToClusterGroup(data.objects, map);
+    });
+  }
+
   makeVehiclesMarkers(map: L.Map): void {
     this.getVehiclesMarkers().subscribe((data: VehiclesWrapper) => {
-      console.log(data.objects);
+      // console.log(data.objects);
 
       addVehicleMarkers(data.objects, map);
     });
@@ -35,7 +62,7 @@ export class MarkersService {
 
   makePOIsMarkers(map: L.Map): void {
     this.getParkingsMarkers().subscribe((data: VehiclesWrapper) => {
-      console.log(data.objects);
+      // console.log(data.objects);
 
       addPOIMarkers(data.objects, map);
     });
@@ -43,7 +70,7 @@ export class MarkersService {
 
   makeParkingsMarkers(map: L.Map): void {
     this.getPOIsMarkers().subscribe((data: VehiclesWrapper) => {
-      console.log(data.objects);
+      // console.log(data.objects);
 
       addParkingMarkers(data.objects, map);
     });
