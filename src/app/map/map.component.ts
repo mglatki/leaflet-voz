@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import * as L from 'leaflet';
 import { Observable } from 'rxjs';
 import { fakeVehicles } from '../helpers/helpers';
@@ -27,8 +28,9 @@ L.Marker.prototype.options.icon = iconDefault;
 })
 export class MapComponent implements AfterViewInit {
   private map: L.Map | undefined;
-  markerClusterGroup: L.MarkerClusterGroup | undefined;
-  markerClusterData = [];
+  form: FormGroup;
+  // markerClusterGroup: L.MarkerClusterGroup | undefined;
+  // markerClusterData = [];
   // vehicles$: Observable<VehiclesWrapper> | undefined;
   // @Input() vehicles:<VehiclesWrapper>;
 
@@ -57,7 +59,21 @@ export class MapComponent implements AfterViewInit {
     this.markerService.makeParkingsMarkers(map);
   }
 
-  constructor(private markerService: MarkersService) {}
+  openFilters(): void {}
+
+  submitForm(): void {
+    console.log(this.form.value);
+  }
+
+  constructor(private markerService: MarkersService, private fb: FormBuilder) {
+    this.form = new FormGroup({
+      showVehiclesCheckbox: new FormControl(''),
+      showPOIsCheckbox: new FormControl(''),
+      showParkingsCheckbox: new FormControl(''),
+      availableVehiclesOnlyCheckbox: new FormControl(''),
+      minimalReachInput: new FormControl(''),
+    });
+  }
 
   ngAfterViewInit(): void {
     this.initMap();

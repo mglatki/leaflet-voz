@@ -4,14 +4,142 @@
   left: 0;
   right: 0;
   bottom: 0;
-  margin: 30px;
+
+  display: grid;
+  grid-template-columns: none;
+  // grid-template-rows: 1fr 3rem;
+  grid-template-rows: 1fr 16rem;
+
+  background-color: gray;
+  color: white;
+  font-family: "Courier New", Courier, monospace;
+
+  .map-frame {
+    border: 2px solid black;
+    height: 100%;
+  }
+
+  #map {
+    height: 100%;
+  }
+
+  h1 {
+    font-size: 1rem;
+    font-weight: bold;
+    display: inline;
+  }
+
+  #filtersHiddenPanel {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 0 1rem;
+    width: 100%;
+  }
+
+  #markersCheckboxes {
+    display: flex;
+    justify-content: space-evenly;
+
+    .markersCheckboxContainer {
+      border-radius: 0.25rem;
+      padding: 0.5rem;
+      color: black;
+    }
+
+    #vehiclesCheckboxContainer {
+      background-color: limegreen;
+    }
+
+    #poisCheckboxContainer {
+      background-color: orange;
+    }
+
+    #parkingsCheckboxContainer {
+      background-color: mediumturquoise;
+    }
+  }
+
+  #vehiclesFilters {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+
+    div + div,
+    button {
+      margin-top: 1rem;
+    }
+
+    #submitButton {
+      background-color: steelblue;
+      color: white;
+
+      border: none;
+      border-radius: 0.25rem;
+      padding: 0.5rem;
+    }
+  }
+
+  .filtersClosedPanel {
+    display: none;
+  }
 }
 
-.map-frame {
-  border: 2px solid black;
-  height: 100%;
-}
+@media (min-width: 820px) {
+  .map-container {
+    grid-template-columns: 10rem 1fr;
+    // grid-template-rows: 1fr 3rem;
+    grid-template-rows: 1fr;
 
-#map {
-  height: 100%;
+    h1 {
+      font-size: 1.25rem;
+    }
+
+    .map-frame {
+      grid-column: 2/3;
+      grid-row: 1/2;
+    }
+
+    #filtersSection {
+      grid-column: 1/2;
+      grid-row: 1/2;
+      padding: 0.5rem;
+
+      #openFiltersButton {
+        display: none;
+      }
+
+      #markersCheckboxes {
+        flex-direction: column;
+        row-gap: 0.5rem;
+      }
+
+      #vehiclesFilters {
+        h1 {
+          text-align: center;
+        }
+      }
+
+      #availableVehiclesContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        column-gap: 0.5rem;
+      }
+
+      #minimalReachContainer {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+
+        padding: 0.5rem;
+        max-width: 100%;
+
+        #minimalReach {
+          max-width: 90%;
+        }
+      }
+    }
+  }
 }

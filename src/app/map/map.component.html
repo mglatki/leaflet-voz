@@ -1,13 +1,71 @@
 <div class="map-container">
   <div class="map-frame">
     <div id="map"></div>
-    <!-- [leafletOptions]="mapOptions"
-       (leafletMapReady)="onMapReady()"
-      leaflet [leafletMarkerCluster]="markerClusterData"
-    -->
   </div>
-  <!-- <div *ngIf="vehicles$">
-    Vehicles
-    <p *ngFor="let v of (vehicles$ | async).objects">{{ v.name }}</p>
-  </div> -->
+  <section id="filtersSection">
+    <div id="filtersHiddenPanel">
+      <h1 id="appTitle">Recuitment task</h1>
+      <button id="openFiltersButton" (click)="openFilters()">Filter</button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+      <section id="markersCheckboxes">
+        <div id="vehiclesCheckboxContainer" class="markersCheckboxContainer">
+          <input
+            type="checkbox"
+            name="Vehicles"
+            id="vehiclesCheckbox"
+            class="markersCheckbox"
+            formControlName="showVehiclesCheckbox"
+          />
+          <label for="vehiclesCheckbox">Vehicles</label>
+        </div>
+        <div id="poisCheckboxContainer" class="markersCheckboxContainer">
+          <input
+            type="checkbox"
+            name="POIs"
+            id="poisCheckbox"
+            class="markersCheckbox"
+            formControlName="showPOIsCheckbox"
+          />
+          <label for="poisCheckbox">POIs</label>
+        </div>
+        <div id="parkingsCheckboxContainer" class="markersCheckboxContainer">
+          <input
+            type="checkbox"
+            name="Parkings"
+            id="parkingsCheckbox"
+            class="markersCheckbox"
+            formControlName="showParkingsCheckbox"
+          />
+          <label for="parkingsCheckbox">Parkings</label>
+        </div>
+      </section>
+      <section id="vehiclesFilters">
+        <h1>Vehicles filters</h1>
+        <div id="availableVehiclesContainer">
+          <input
+            type="checkbox"
+            name="Available only"
+            id="availableVehiclesCheckbox"
+            class="availableVehiclesFiltersCheckbox"
+            formControlName="availableVehiclesOnlyCheckbox"
+          />
+          <label for="availableVehiclesCheckbox">Available only</label>
+        </div>
+        <div id="minimalReachContainer">
+          <input
+            type="number"
+            name="Minimal reach"
+            id="minimalReach"
+            placeholder="Minimal reach"
+            formControlName="minimalReachInput"
+          />
+          <label for="minimalReach">km</label>
+        </div>
+        <button type="submit" id="submitButton" [disabled]="!form.valid">
+          Apply
+        </button>
+      </section>
+    </form>
+  </section>
 </div>
