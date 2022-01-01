@@ -78,8 +78,9 @@ export class MapComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.initMap();
     if (this.map) {
-      this.markerService.makePOIsClusterGroups(this.map);
+      // this.markerService.makePOIsClusterGroups(this.map);
       // this.markerService.makeParkingsMarkersClusterGroups(this.map);
+      this.markerService.makeClusterGroup(this.map);
       // this.markerService.makeVehiclesClusterGroups(this.map);
     }
   }

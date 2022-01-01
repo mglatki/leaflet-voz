@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import {
+  addCustomMarkersToClusterGroup,
   addParkingMarkers,
   addParkingMarkersToClusterGroup,
   addPOIMarkers,
@@ -27,6 +28,24 @@ export class MarkersService {
     'https://dev.vozilla.pl/api-client-portal/map?objectType=PARKING';
 
   constructor(private http: HttpClient) {}
+
+  makeClusterGroup(map: L.Map): void {
+    forkJoin({
+      vehiclesRequest: this.getVehiclesMarkers(),
+      poisRequest: this.getPOIsMarkers(),
+      parkingsRequest: this.getParkingsMarkers(),
+    }).subscribe(({ vehiclesRequest, poisRequest, parkingsRequest }) => {
+      const markers = [
+        ...vehiclesRequest.objects,
+        ...poisRequest.objects,
+        ...parkingsRequest.objects,
+      ].map((item) => {
+        return { lat: item.location.latitude, lng: item.location.longitude };
+      });
+
+      addCustomMarkersToClusterGroup(markers, map);
+    });
+  }
 
   makeVehiclesClusterGroups(map: L.Map): void {
     this.getVehiclesMarkers().subscribe((data: VehiclesWrapper) => {
