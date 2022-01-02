@@ -1,58 +1,7 @@
-import { Injectable } from '@angular/core';
 import * as L from 'leaflet';
 import { Parking } from '../models/Parking';
 import { Poi } from '../models/Poi';
 import { Vehicle } from '../models/Vehicle';
-
-export function initMarker(map: L.Map): L.Marker {
-  const userMarker = L.marker([39.8282, -98.5795]);
-
-  userMarker.addTo(map);
-
-  return userMarker;
-}
-
-export function fakeMarkers(map: L.Map): void {
-  const markers = new Array();
-
-  markers.push({ lat: 39 - 1, lng: -98 - 1 });
-  markers.push({ lat: 39 - 2, lng: -98 - 2 });
-  markers.push({ lat: 39 - 3, lng: -98 - 3 });
-  markers.push({ lat: 39 - 4, lng: -98 - 4 });
-  markers.push({ lat: 39 - 5, lng: -98 - 5 });
-
-  addCustomMarkers(markers, map);
-}
-
-export function addVehicleMarkers(veh: ReadonlyArray<Vehicle>, map: L.Map) {
-  addCustomMarkers(
-    veh.map((v) => {
-      return { lat: v.location.latitude, lng: v.location.longitude };
-    }),
-    map
-  );
-}
-
-export function addPOIMarkers(pois: ReadonlyArray<Poi>, map: L.Map) {
-  addCustomMarkers(
-    pois.map((p) => {
-      return { lat: p.location.latitude, lng: p.location.longitude };
-    }),
-    map
-  );
-}
-
-export function addParkingMarkers(
-  parkings: ReadonlyArray<Parking>,
-  map: L.Map
-) {
-  addCustomMarkers(
-    parkings.map((p) => {
-      return { lat: p.location.latitude, lng: p.location.longitude };
-    }),
-    map
-  );
-}
 
 export function addCustomMarkers(
   markers: Array<{ lat: number; lng: number }>,
@@ -71,7 +20,11 @@ export function addVehicleMarkersToClusterGroup(
 ) {
   addCustomMarkersToClusterGroup(
     veh.map((v) => {
-      return { lat: v.location.latitude, lng: v.location.longitude };
+      return {
+        lat: v.location.latitude,
+        lng: v.location.longitude,
+        discriminator: v.discriminator,
+      };
     }),
     map
   );
@@ -83,7 +36,11 @@ export function addPOIMarkersToClusterGroup(
 ) {
   addCustomMarkersToClusterGroup(
     pois.map((p) => {
-      return { lat: p.location.latitude, lng: p.location.longitude };
+      return {
+        lat: p.location.latitude,
+        lng: p.location.longitude,
+        discriminator: p.discriminator,
+      };
     }),
     map
   );
@@ -95,29 +52,68 @@ export function addParkingMarkersToClusterGroup(
 ) {
   addCustomMarkersToClusterGroup(
     parkings.map((p) => {
-      return { lat: p.location.latitude, lng: p.location.longitude };
+      return {
+        lat: p.location.latitude,
+        lng: p.location.longitude,
+        discriminator: p.discriminator,
+      };
     }),
     map
   );
 }
 
 export function addCustomMarkersToClusterGroup(
-  markers: Array<{ lat: number; lng: number }>,
-  // markerClusterGroup: L.MarkerClusterGroup,
+  markers: Array<{ lat: number; lng: number; discriminator: string }>,
   map: L.Map
-): void {
+): L.MarkerClusterGroup {
   const markerClusterGroup = L.markerClusterGroup({
     removeOutsideVisibleBounds: true,
   });
 
-  markers.forEach((item) => {
+  // markers.forEach((item) => {
+  //   const newIcon = L.icon({
+  //     iconUrl: 'assets/parking.png',
+  //     iconSize: [25, 46],
+  //     iconAnchor: [12, 46],
+  //   });
+  //   const popup = ` ${item.discriminator}
+  //   Lat ${item.lat}, lng ${item.lng}`;
+  //   console.log(popup);
+  //   markerClusterGroup
+  //     // .addLayer(L.marker([item.lat, item.lng]))
+  //     .addLayer(L.marker([item.lat, item.lng], { icon: newIcon }))
+  //     .bindPopup(popup);
+  // });
+
+  markers.map((item) => {
+    const newIcon = L.icon({
+      iconUrl:
+        item.discriminator === 'vehicle'
+          ? 'assets/vehicle.png'
+          : item.discriminator === 'parking'
+          ? 'assets/parking.png'
+          : 'assets/poi.png',
+      iconSize: [25, 46],
+      iconAnchor: [12, 46],
+    });
+    const popup = item.discriminator;
+    console.log(popup);
     markerClusterGroup
-      .addLayer(L.marker([item.lat, item.lng]))
-      // .addTo(map)
-      .bindPopup(`Lat ${item.lat}, lng ${item.lng}`);
+      // .addLayer(L.marker([item.lat, item.lng]))
+      .addLayer(
+        L.marker([item.lat, item.lng], { icon: newIcon }).bindPopup(
+          ` ${item.discriminator}
+             Lat ${item.lat}, lng ${item.lng}`
+        )
+      );
   });
 
-  markerClusterGroup.addTo(map);
+  // markers.forEach((item) => {
+  //   console.log(` ${item.discriminator}
+  //   Lat ${item.lat}, lng ${item.lng}`);
+  // });
+
+  return markerClusterGroup.addTo(map);
 }
 
 export function fakeVehicles(map: L.Map): void {

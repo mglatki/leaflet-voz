@@ -4,15 +4,13 @@ import * as L from 'leaflet';
 import { forkJoin, Observable } from 'rxjs';
 import {
   addCustomMarkersToClusterGroup,
-  addParkingMarkers,
   addParkingMarkersToClusterGroup,
-  addPOIMarkers,
   addPOIMarkersToClusterGroup,
-  addVehicleMarkers,
   addVehicleMarkersToClusterGroup,
+  ParkingsWrapper,
+  PoisWrapper,
   VehiclesWrapper,
 } from './helpers/helpers';
-import { Vehicle } from './models/Vehicle';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +25,10 @@ export class MarkersService {
   vozillaParkings: string =
     'https://dev.vozilla.pl/api-client-portal/map?objectType=PARKING';
 
+  respObjectsArray: Array<any> | undefined;
+  markers: { lat: number; lng: number; discriminator: string }[] = [];
+  markersClustersGroup: L.MarkerClusterGroup | undefined;
+
   constructor(private http: HttpClient) {}
 
   makeClusterGroup(map: L.Map): void {
@@ -35,16 +37,62 @@ export class MarkersService {
       poisRequest: this.getPOIsMarkers(),
       parkingsRequest: this.getParkingsMarkers(),
     }).subscribe(({ vehiclesRequest, poisRequest, parkingsRequest }) => {
-      const markers = [
+      this.respObjectsArray = [
         ...vehiclesRequest.objects,
         ...poisRequest.objects,
         ...parkingsRequest.objects,
-      ].map((item) => {
-        return { lat: item.location.latitude, lng: item.location.longitude };
+      ];
+
+      this.markers = this.respObjectsArray.map((item) => {
+        return {
+          lat: item.location.latitude,
+          lng: item.location.longitude,
+          discriminator: item.discriminator,
+        };
       });
 
-      addCustomMarkersToClusterGroup(markers, map);
+      this.markersClustersGroup = addCustomMarkersToClusterGroup(
+        this.markers,
+        map
+      );
     });
+  }
+
+  updateClustersGroup(
+    map: L.Map,
+    showParkings: boolean,
+    showPois: boolean,
+    showVehicles: boolean,
+    showAvailableVehicles: boolean,
+    minVehiclesRange: number
+  ): void {
+    if (this.markersClustersGroup) map.removeLayer(this.markersClustersGroup);
+
+    if (this.respObjectsArray) {
+      const filteredObjectsArray = this.respObjectsArray.filter((item) => {
+        if (showParkings && item.discriminator === 'parking') return item;
+        if (showPois && item.discriminator === 'poi') return item;
+
+        if (showVehicles && item.discriminator === 'vehicle') {
+          if (showAvailableVehicles && item.status !== 'AVAILABLE') return;
+          if (minVehiclesRange > 0 && item.rangeKm < minVehiclesRange) return;
+          else return item;
+        }
+      });
+
+      this.markers = filteredObjectsArray.map((item) => {
+        return {
+          lat: item.location.latitude,
+          lng: item.location.longitude,
+          discriminator: item.discriminator,
+        };
+      });
+
+      this.markersClustersGroup = addCustomMarkersToClusterGroup(
+        this.markers,
+        map
+      );
+    }
   }
 
   makeVehiclesClusterGroups(map: L.Map): void {
@@ -56,7 +104,7 @@ export class MarkersService {
   }
 
   makePOIsClusterGroups(map: L.Map): void {
-    this.getParkingsMarkers().subscribe((data: VehiclesWrapper) => {
+    this.getParkingsMarkers().subscribe((data: ParkingsWrapper) => {
       // console.log(data.objects);
 
       addPOIMarkersToClusterGroup(data.objects, map);
@@ -64,34 +112,10 @@ export class MarkersService {
   }
 
   makeParkingsMarkersClusterGroups(map: L.Map): void {
-    this.getPOIsMarkers().subscribe((data: VehiclesWrapper) => {
+    this.getPOIsMarkers().subscribe((data: PoisWrapper) => {
       // console.log(data.objects);
 
       addParkingMarkersToClusterGroup(data.objects, map);
-    });
-  }
-
-  makeVehiclesMarkers(map: L.Map): void {
-    this.getVehiclesMarkers().subscribe((data: VehiclesWrapper) => {
-      // console.log(data.objects);
-
-      addVehicleMarkers(data.objects, map);
-    });
-  }
-
-  makePOIsMarkers(map: L.Map): void {
-    this.getParkingsMarkers().subscribe((data: VehiclesWrapper) => {
-      // console.log(data.objects);
-
-      addPOIMarkers(data.objects, map);
-    });
-  }
-
-  makeParkingsMarkers(map: L.Map): void {
-    this.getPOIsMarkers().subscribe((data: VehiclesWrapper) => {
-      // console.log(data.objects);
-
-      addParkingMarkers(data.objects, map);
     });
   }
 
@@ -99,11 +123,11 @@ export class MarkersService {
     return this.http.get<VehiclesWrapper>(this.vozillaVehicles);
   }
 
-  getPOIsMarkers(): Observable<VehiclesWrapper> {
-    return this.http.get<VehiclesWrapper>(this.vozillaPOIs);
+  getPOIsMarkers(): Observable<PoisWrapper> {
+    return this.http.get<PoisWrapper>(this.vozillaPOIs);
   }
 
-  getParkingsMarkers(): Observable<VehiclesWrapper> {
-    return this.http.get<VehiclesWrapper>(this.vozillaParkings);
+  getParkingsMarkers(): Observable<ParkingsWrapper> {
+    return this.http.get<ParkingsWrapper>(this.vozillaParkings);
   }
 }

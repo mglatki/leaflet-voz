@@ -71,6 +71,10 @@
       margin-top: 1rem;
     }
 
+    #availableVehiclesContainer {
+      padding: 0 0.5rem;
+    }
+
     #submitButton {
       background-color: steelblue;
       color: white;
@@ -78,6 +82,10 @@
       border: none;
       border-radius: 0.25rem;
       padding: 0.5rem;
+    }
+
+    #submitButton :disabled {
+      background-color: lightgray;
     }
   }
 
@@ -89,7 +97,6 @@
 @media (min-width: 820px) {
   .map-container {
     grid-template-columns: 10rem 1fr;
-    // grid-template-rows: 1fr 3rem;
     grid-template-rows: 1fr;
 
     h1 {
@@ -128,7 +135,7 @@
         column-gap: 0.5rem;
       }
 
-      #minimalReachContainer {
+      #minimalRangeContainer {
         display: flex;
         align-items: center;
         justify-content: space-evenly;
@@ -136,7 +143,7 @@
         padding: 0.5rem;
         max-width: 100%;
 
-        #minimalReach {
+        #minimalRange {
           max-width: 90%;
         }
       }

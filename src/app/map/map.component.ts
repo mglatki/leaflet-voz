@@ -1,10 +1,7 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import * as L from 'leaflet';
-import { Observable } from 'rxjs';
-import { fakeVehicles } from '../helpers/helpers';
 import { MarkersService } from '../markers.service';
-import { Vehicle } from '../models/Vehicle';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -29,10 +26,6 @@ L.Marker.prototype.options.icon = iconDefault;
 export class MapComponent implements AfterViewInit {
   private map: L.Map | undefined;
   form: FormGroup;
-  // markerClusterGroup: L.MarkerClusterGroup | undefined;
-  // markerClusterData = [];
-  // vehicles$: Observable<VehiclesWrapper> | undefined;
-  // @Input() vehicles:<VehiclesWrapper>;
 
   private initMap(): void {
     this.map = L.map('map', {
@@ -53,16 +46,19 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  initMarkers(map: L.Map): void {
-    this.markerService.makeVehiclesMarkers(map);
-    this.markerService.makePOIsMarkers(map);
-    this.markerService.makeParkingsMarkers(map);
-  }
-
   openFilters(): void {}
 
   submitForm(): void {
     console.log(this.form.value);
+    if (this.map)
+      this.markerService.updateClustersGroup(
+        this.map,
+        this.form.value.showParkingsCheckbox,
+        this.form.value.showPOIsCheckbox,
+        this.form.value.showVehiclesCheckbox,
+        this.form.value.availableVehiclesOnlyCheckbox,
+        this.form.value.minimalRangeInput
+      );
   }
 
   constructor(private markerService: MarkersService, private fb: FormBuilder) {
@@ -71,17 +67,14 @@ export class MapComponent implements AfterViewInit {
       showPOIsCheckbox: new FormControl(''),
       showParkingsCheckbox: new FormControl(''),
       availableVehiclesOnlyCheckbox: new FormControl(''),
-      minimalReachInput: new FormControl(''),
+      minimalRangeInput: new FormControl(''),
     });
   }
 
   ngAfterViewInit(): void {
     this.initMap();
     if (this.map) {
-      // this.markerService.makePOIsClusterGroups(this.map);
-      // this.markerService.makeParkingsMarkersClusterGroups(this.map);
       this.markerService.makeClusterGroup(this.map);
-      // this.markerService.makeVehiclesClusterGroups(this.map);
     }
   }
 }
