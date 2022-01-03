@@ -3,6 +3,10 @@ import { Parking } from '../models/Parking';
 import { Poi } from '../models/Poi';
 import { Vehicle } from '../models/Vehicle';
 
+const vehicleString: string = 'vehicle';
+const poiString: string = 'poi';
+const parkingString: string = 'parking';
+
 export function addCustomMarkers(
   markers: Array<{ lat: number; lng: number }>,
   map: L.Map
@@ -142,20 +146,20 @@ function generateMarkerPopupsContent(item: {
   availableSpacesCount: number;
 }): ((layer: L.Layer) => L.Content) | L.Content | L.Popup {
   const firstLine =
-    item.discriminator === 'vehicle'
+    item.discriminator === vehicleString
       ? item.name
-      : item.discriminator === 'poi'
+      : item.discriminator === poiString
       ? item.description
-      : item.discriminator === 'parking'
+      : item.discriminator === parkingString
       ? `Parking ${item.address.street} ${item.address.house}`
       : '';
 
   const secondLine =
-    item.discriminator === 'vehicle'
+    item.discriminator === vehicleString
       ? `${item.sideNumber} ${item.status}`
-      : item.discriminator === 'poi'
+      : item.discriminator === poiString
       ? ''
-      : item.discriminator === 'parking'
+      : item.discriminator === parkingString
       ? `Available ${item.availableSpacesCount} of ${item.spacesCount}`
       : '';
 
@@ -170,9 +174,9 @@ function generateMarkersIcon(item: {
 }): L.IconOptions {
   return {
     iconUrl:
-      item.discriminator === 'parking'
+      item.discriminator === parkingString
         ? 'assets/parking.png'
-        : item.discriminator === 'poi'
+        : item.discriminator === poiString
         ? 'assets/poi.png'
         : item.status === 'AVAILABLE'
         ? 'assets/availableVehicle.png'

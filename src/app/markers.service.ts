@@ -18,12 +18,13 @@ import {
 export class MarkersService {
   vozillaAPI: string =
     'https://dev.vozilla.pl/api-client-portal/map?objectType=';
-
   vozillaVehicles: string = `${this.vozillaAPI}VEHICLE`;
-
   vozillaPOIs: string = `${this.vozillaAPI}POI`;
-
   vozillaParkings: string = `${this.vozillaAPI}PARKING`;
+
+  vehicleString: string = 'vehicle';
+  poiString: string = 'poi';
+  parkingString: string = 'parking';
 
   respObjectsArray: Array<any> | undefined;
   markers: {
@@ -73,15 +74,18 @@ export class MarkersService {
           lat: item.location.latitude,
           lng: item.location.longitude,
           discriminator: item.discriminator,
-          status: item.discriminator === 'vehicle' ? item.status : '',
+          status: item.discriminator === this.vehicleString ? item.status : '',
           name:
-            item.discriminator === 'vehicle' || item.discriminator === 'vehicle'
+            item.discriminator === this.vehicleString ||
+            item.discriminator === this.vehicleString
               ? item.name
               : '',
-          sideNumber: item.discriminator === 'vehicle' ? item.sideNumber : '',
-          description: item.discriminator !== 'vehicle' ? item.description : '',
+          sideNumber:
+            item.discriminator === this.vehicleString ? item.sideNumber : '',
+          description:
+            item.discriminator !== this.vehicleString ? item.description : '',
           address:
-            item.discriminator === 'parking'
+            item.discriminator === this.parkingString
               ? {
                   street: item.address.street,
                   house: item.address.house,
@@ -90,9 +94,12 @@ export class MarkersService {
                   street: '',
                   house: '',
                 },
-          spacesCount: item.discriminator === 'parking' ? item.spacesCount : 0,
+          spacesCount:
+            item.discriminator === this.parkingString ? item.spacesCount : 0,
           availableSpacesCount:
-            item.discriminator === 'parking' ? item.availableSpacesCount : 0,
+            item.discriminator === this.parkingString
+              ? item.availableSpacesCount
+              : 0,
         };
       });
   }
@@ -109,10 +116,11 @@ export class MarkersService {
 
     if (this.respObjectsArray) {
       const filteredObjectsArray = this.respObjectsArray.filter((item) => {
-        if (showParkings && item.discriminator === 'parking') return item;
-        if (showPois && item.discriminator === 'poi') return item;
+        if (showParkings && item.discriminator === this.parkingString)
+          return item;
+        if (showPois && item.discriminator === this.poiString) return item;
 
-        if (showVehicles && item.discriminator === 'vehicle') {
+        if (showVehicles && item.discriminator === this.vehicleString) {
           if (showAvailableVehicles && item.status !== 'AVAILABLE') return;
           if (minVehiclesRange > 0 && item.rangeKm < minVehiclesRange) return;
           else return item;
