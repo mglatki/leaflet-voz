@@ -46,8 +46,6 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  openFilters(): void {}
-
   submitForm(): void {
     console.log(this.form.value);
     if (this.map)
@@ -63,9 +61,9 @@ export class MapComponent implements AfterViewInit {
 
   constructor(private markerService: MarkersService, private fb: FormBuilder) {
     this.form = new FormGroup({
-      showVehiclesCheckbox: new FormControl(''),
-      showPOIsCheckbox: new FormControl(''),
-      showParkingsCheckbox: new FormControl(''),
+      showVehiclesCheckbox: new FormControl('showVehiclesCheckbox'),
+      showPOIsCheckbox: new FormControl('showPOIsCheckbox'),
+      showParkingsCheckbox: new FormControl('showParkingsCheckbox'),
       availableVehiclesOnlyCheckbox: new FormControl(''),
       minimalRangeInput: new FormControl(''),
     });

@@ -1,13 +1,17 @@
-<div class="map-container">
+<div id="map-container">
   <div class="map-frame">
     <div id="map"></div>
   </div>
   <section id="filtersSection">
     <div id="filtersHiddenPanel">
       <h1 id="appTitle">Recuitment task</h1>
-      <button id="openFiltersButton" (click)="openFilters()">Filter</button>
     </div>
-    <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="submitForm()"
+      novalidate
+      id="filtersForm"
+    >
       <section id="markersCheckboxes">
         <div id="vehiclesCheckboxContainer" class="markersCheckboxContainer">
           <input

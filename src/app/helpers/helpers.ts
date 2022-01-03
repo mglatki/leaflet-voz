@@ -170,7 +170,7 @@ function generateMarkerPopupsContent(item: {
   // ? 'Available'
   // : 'Not available'
 
-  return `${firstLine}\n${secondLine}`;
+  return `${firstLine}<br>${secondLine}`;
 }
 
 function generateMarkersIcon(item: {

@@ -1,4 +1,4 @@
-.map-container {
+#map-container {
   position: absolute;
   top: 0;
   left: 0;
@@ -7,7 +7,6 @@
 
   display: grid;
   grid-template-columns: none;
-  // grid-template-rows: 1fr 3rem;
   grid-template-rows: 1fr 16rem;
 
   background-color: gray;
@@ -15,7 +14,6 @@
   font-family: "Courier New", Courier, monospace;
 
   .map-frame {
-    border: 2px solid black;
     height: 100%;
   }
 
@@ -112,10 +110,6 @@
       grid-column: 1/2;
       grid-row: 1/2;
       padding: 0.5rem;
-
-      #openFiltersButton {
-        display: none;
-      }
 
       #markersCheckboxes {
         flex-direction: column;
