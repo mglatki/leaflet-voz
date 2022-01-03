@@ -16,14 +16,14 @@ import {
   providedIn: 'root',
 })
 export class MarkersService {
-  vozillaVehicles: string =
-    'https://dev.vozilla.pl/api-client-portal/map?objectType=VEHICLE';
+  vozillaAPI: string =
+    'https://dev.vozilla.pl/api-client-portal/map?objectType=';
 
-  vozillaPOIs: string =
-    'https://dev.vozilla.pl/api-client-portal/map?objectType=POI';
+  vozillaVehicles: string = `${this.vozillaAPI}VEHICLE`;
 
-  vozillaParkings: string =
-    'https://dev.vozilla.pl/api-client-portal/map?objectType=PARKING';
+  vozillaPOIs: string = `${this.vozillaAPI}POI`;
+
+  vozillaParkings: string = `${this.vozillaAPI}PARKING`;
 
   respObjectsArray: Array<any> | undefined;
   markers: {
@@ -130,24 +130,18 @@ export class MarkersService {
 
   makeVehiclesClusterGroups(map: L.Map): void {
     this.getVehiclesMarkers().subscribe((data: VehiclesWrapper) => {
-      // console.log(data.objects);
-
       addVehicleMarkersToClusterGroup(data.objects, map);
     });
   }
 
   makePOIsClusterGroups(map: L.Map): void {
     this.getPOIsMarkers().subscribe((data: PoisWrapper) => {
-      // console.log(data.objects);
-
       addPOIMarkersToClusterGroup(data.objects, map);
     });
   }
 
   makeParkingsMarkersClusterGroups(map: L.Map): void {
     this.getParkingsMarkers().subscribe((data: ParkingsWrapper) => {
-      // console.log(data.objects);
-
       addParkingMarkersToClusterGroup(data.objects, map);
     });
   }
