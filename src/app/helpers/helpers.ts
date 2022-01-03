@@ -176,7 +176,7 @@ function generateMarkersIcon(item: {
         ? 'assets/poi.png'
         : item.status === 'AVAILABLE'
         ? 'assets/availableVehicle.png'
-        : 'assets/vehicle.png',
+        : 'assets/unavailableVehicle.png',
     iconSize: [25, 39],
     iconAnchor: [12, 39],
     popupAnchor: [0, -35],
