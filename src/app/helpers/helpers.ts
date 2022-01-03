@@ -118,19 +118,12 @@ export function addCustomMarkersToClusterGroup(
     const newIcon = L.icon(generateMarkersIcon(item));
     const popup = item.discriminator;
     console.log(popup);
-    markerClusterGroup
-      // .addLayer(L.marker([item.lat, item.lng]))
-      .addLayer(
-        L.marker([item.lat, item.lng], { icon: newIcon }).bindPopup(
-          generateMarkerPopupsContent(item)
-        )
-      );
+    markerClusterGroup.addLayer(
+      L.marker([item.lat, item.lng], { icon: newIcon }).bindPopup(
+        generateMarkerPopupsContent(item)
+      )
+    );
   });
-
-  // markers.forEach((item) => {
-  //   console.log(` ${item.discriminator}
-  //   Lat ${item.lat}, lng ${item.lng}`);
-  // });
 
   return markerClusterGroup.addTo(map);
 }
@@ -166,10 +159,6 @@ function generateMarkerPopupsContent(item: {
       ? `Available ${item.availableSpacesCount} of ${item.spacesCount}`
       : '';
 
-  // ? item.status === 'AVAILABLE'
-  // ? 'Available'
-  // : 'Not available'
-
   return `${firstLine}<br>${secondLine}`;
 }
 
@@ -190,6 +179,7 @@ function generateMarkersIcon(item: {
         : 'assets/vehicle.png',
     iconSize: [25, 39],
     iconAnchor: [12, 39],
+    popupAnchor: [0, -35],
   };
 }
 

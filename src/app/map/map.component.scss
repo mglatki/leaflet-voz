@@ -9,7 +9,7 @@
   grid-template-columns: none;
   grid-template-rows: 1fr 16rem;
 
-  background-color: gray;
+  background-color: rgb(46, 38, 99);
   color: white;
   font-family: "Courier New", Courier, monospace;
 
@@ -54,7 +54,7 @@
     }
 
     #parkingsCheckboxContainer {
-      background-color: mediumturquoise;
+      background-color: steelblue;
     }
   }
 
@@ -74,27 +74,19 @@
     }
 
     #submitButton {
-      background-color: steelblue;
+      background-color: mediumturquoise;
       color: white;
 
       border: none;
       border-radius: 0.25rem;
       padding: 0.5rem;
     }
-
-    #submitButton :disabled {
-      background-color: lightgray;
-    }
-  }
-
-  .filtersClosedPanel {
-    display: none;
   }
 }
 
 @media (min-width: 820px) {
-  .map-container {
-    grid-template-columns: 10rem 1fr;
+  #map-container {
+    grid-template-columns: 11rem 1fr;
     grid-template-rows: 1fr;
 
     h1 {
