@@ -57,7 +57,18 @@ export class MarkersService {
         ...parkingsRequest.objects,
       ];
 
-      this.markers = this.respObjectsArray.map((item) => {
+      this.mapRespToMarkers(this.respObjectsArray);
+
+      this.markersClustersGroup = addCustomMarkersToClusterGroup(
+        this.markers,
+        map
+      );
+    });
+  }
+
+  private mapRespToMarkers(arr: Array<any>) {
+    if (arr)
+      this.markers = arr.map((item) => {
         return {
           lat: item.location.latitude,
           lng: item.location.longitude,
@@ -84,12 +95,6 @@ export class MarkersService {
             item.discriminator === 'parking' ? item.availableSpacesCount : 0,
         };
       });
-
-      this.markersClustersGroup = addCustomMarkersToClusterGroup(
-        this.markers,
-        map
-      );
-    });
   }
 
   updateClustersGroup(
@@ -114,33 +119,7 @@ export class MarkersService {
         }
       });
 
-      this.markers = filteredObjectsArray.map((item) => {
-        return {
-          lat: item.location.latitude,
-          lng: item.location.longitude,
-          discriminator: item.discriminator,
-          status: item.discriminator === 'vehicle' ? item.status : '',
-          name:
-            item.discriminator === 'vehicle' || item.discriminator === 'vehicle'
-              ? item.name
-              : '',
-          sideNumber: item.discriminator === 'vehicle' ? item.sideNumber : '',
-          description: item.discriminator !== 'vehicle' ? item.description : '',
-          address:
-            item.discriminator === 'parking'
-              ? {
-                  street: item.address.street,
-                  house: item.address.house,
-                }
-              : {
-                  street: '',
-                  house: '',
-                },
-          spacesCount: item.discriminator === 'parking' ? item.spacesCount : 0,
-          availableSpacesCount:
-            item.discriminator === 'parking' ? item.availableSpacesCount : 0,
-        };
-      });
+      this.mapRespToMarkers(filteredObjectsArray);
 
       this.markersClustersGroup = addCustomMarkersToClusterGroup(
         this.markers,
