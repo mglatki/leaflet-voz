@@ -26,7 +26,21 @@ export class MarkersService {
     'https://dev.vozilla.pl/api-client-portal/map?objectType=PARKING';
 
   respObjectsArray: Array<any> | undefined;
-  markers: { lat: number; lng: number; discriminator: string }[] = [];
+  markers: {
+    lat: number;
+    lng: number;
+    discriminator: string;
+    status: string;
+    name: string;
+    sideNumber: string;
+    description: string;
+    address: {
+      street: string;
+      house: string;
+    };
+    spacesCount: number;
+    availableSpacesCount: number;
+  }[] = [];
   markersClustersGroup: L.MarkerClusterGroup | undefined;
 
   constructor(private http: HttpClient) {}
@@ -48,6 +62,26 @@ export class MarkersService {
           lat: item.location.latitude,
           lng: item.location.longitude,
           discriminator: item.discriminator,
+          status: item.discriminator === 'vehicle' ? item.status : '',
+          name:
+            item.discriminator === 'vehicle' || item.discriminator === 'vehicle'
+              ? item.name
+              : '',
+          sideNumber: item.discriminator === 'vehicle' ? item.sideNumber : '',
+          description: item.discriminator !== 'vehicle' ? item.description : '',
+          address:
+            item.discriminator === 'parking'
+              ? {
+                  street: item.address.street,
+                  house: item.address.house,
+                }
+              : {
+                  street: '',
+                  house: '',
+                },
+          spacesCount: item.discriminator === 'parking' ? item.spacesCount : 0,
+          availableSpacesCount:
+            item.discriminator === 'parking' ? item.availableSpacesCount : 0,
         };
       });
 
@@ -85,6 +119,26 @@ export class MarkersService {
           lat: item.location.latitude,
           lng: item.location.longitude,
           discriminator: item.discriminator,
+          status: item.discriminator === 'vehicle' ? item.status : '',
+          name:
+            item.discriminator === 'vehicle' || item.discriminator === 'vehicle'
+              ? item.name
+              : '',
+          sideNumber: item.discriminator === 'vehicle' ? item.sideNumber : '',
+          description: item.discriminator !== 'vehicle' ? item.description : '',
+          address:
+            item.discriminator === 'parking'
+              ? {
+                  street: item.address.street,
+                  house: item.address.house,
+                }
+              : {
+                  street: '',
+                  house: '',
+                },
+          spacesCount: item.discriminator === 'parking' ? item.spacesCount : 0,
+          availableSpacesCount:
+            item.discriminator === 'parking' ? item.availableSpacesCount : 0,
         };
       });
 
@@ -104,7 +158,7 @@ export class MarkersService {
   }
 
   makePOIsClusterGroups(map: L.Map): void {
-    this.getParkingsMarkers().subscribe((data: ParkingsWrapper) => {
+    this.getPOIsMarkers().subscribe((data: PoisWrapper) => {
       // console.log(data.objects);
 
       addPOIMarkersToClusterGroup(data.objects, map);
@@ -112,7 +166,7 @@ export class MarkersService {
   }
 
   makeParkingsMarkersClusterGroups(map: L.Map): void {
-    this.getPOIsMarkers().subscribe((data: PoisWrapper) => {
+    this.getParkingsMarkers().subscribe((data: ParkingsWrapper) => {
       // console.log(data.objects);
 
       addParkingMarkersToClusterGroup(data.objects, map);

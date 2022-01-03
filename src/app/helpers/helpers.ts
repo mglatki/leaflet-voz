@@ -15,7 +15,7 @@ export function addCustomMarkers(
 }
 
 export function addVehicleMarkersToClusterGroup(
-  veh: ReadonlyArray<Parking>,
+  veh: ReadonlyArray<Vehicle>,
   map: L.Map
 ) {
   addCustomMarkersToClusterGroup(
@@ -24,6 +24,16 @@ export function addVehicleMarkersToClusterGroup(
         lat: v.location.latitude,
         lng: v.location.longitude,
         discriminator: v.discriminator,
+        status: v.status,
+        name: v.name,
+        sideNumber: v.sideNumber,
+        description: '',
+        address: {
+          street: '',
+          house: '',
+        },
+        spacesCount: 0,
+        availableSpacesCount: 0,
       };
     }),
     map
@@ -31,7 +41,7 @@ export function addVehicleMarkersToClusterGroup(
 }
 
 export function addPOIMarkersToClusterGroup(
-  pois: ReadonlyArray<Parking>,
+  pois: ReadonlyArray<Poi>,
   map: L.Map
 ) {
   addCustomMarkersToClusterGroup(
@@ -40,6 +50,16 @@ export function addPOIMarkersToClusterGroup(
         lat: p.location.latitude,
         lng: p.location.longitude,
         discriminator: p.discriminator,
+        status: '',
+        name: p.name,
+        sideNumber: '',
+        description: p.description,
+        address: {
+          street: '',
+          house: '',
+        },
+        spacesCount: 0,
+        availableSpacesCount: 0,
       };
     }),
     map
@@ -56,6 +76,16 @@ export function addParkingMarkersToClusterGroup(
         lat: p.location.latitude,
         lng: p.location.longitude,
         discriminator: p.discriminator,
+        status: '',
+        name: '',
+        sideNumber: '',
+        description: '',
+        address: {
+          street: p.address.street,
+          house: p.address.house,
+        },
+        spacesCount: p.spacesCount,
+        availableSpacesCount: p.availableSpacesCount,
       };
     }),
     map
@@ -63,47 +93,36 @@ export function addParkingMarkersToClusterGroup(
 }
 
 export function addCustomMarkersToClusterGroup(
-  markers: Array<{ lat: number; lng: number; discriminator: string }>,
+  markers: Array<{
+    lat: number;
+    lng: number;
+    discriminator: string;
+    status: string;
+    name: string;
+    sideNumber: string;
+    description: string;
+    address: {
+      street: string;
+      house: string;
+    };
+    spacesCount: number;
+    availableSpacesCount: number;
+  }>,
   map: L.Map
 ): L.MarkerClusterGroup {
   const markerClusterGroup = L.markerClusterGroup({
     removeOutsideVisibleBounds: true,
   });
 
-  // markers.forEach((item) => {
-  //   const newIcon = L.icon({
-  //     iconUrl: 'assets/parking.png',
-  //     iconSize: [25, 46],
-  //     iconAnchor: [12, 46],
-  //   });
-  //   const popup = ` ${item.discriminator}
-  //   Lat ${item.lat}, lng ${item.lng}`;
-  //   console.log(popup);
-  //   markerClusterGroup
-  //     // .addLayer(L.marker([item.lat, item.lng]))
-  //     .addLayer(L.marker([item.lat, item.lng], { icon: newIcon }))
-  //     .bindPopup(popup);
-  // });
-
   markers.map((item) => {
-    const newIcon = L.icon({
-      iconUrl:
-        item.discriminator === 'vehicle'
-          ? 'assets/vehicle.png'
-          : item.discriminator === 'parking'
-          ? 'assets/parking.png'
-          : 'assets/poi.png',
-      iconSize: [25, 46],
-      iconAnchor: [12, 46],
-    });
+    const newIcon = L.icon(generateMarkersIcon(item));
     const popup = item.discriminator;
     console.log(popup);
     markerClusterGroup
       // .addLayer(L.marker([item.lat, item.lng]))
       .addLayer(
         L.marker([item.lat, item.lng], { icon: newIcon }).bindPopup(
-          ` ${item.discriminator}
-             Lat ${item.lat}, lng ${item.lng}`
+          generateMarkerPopupsContent(item)
         )
       );
   });
@@ -116,116 +135,62 @@ export function addCustomMarkersToClusterGroup(
   return markerClusterGroup.addTo(map);
 }
 
-export function fakeVehicles(map: L.Map): void {
-  let veh = new Array<Vehicle>();
-  const firstVehicle: Vehicle = {
-    discriminator: 'vehicle',
-    platesNumber: 'WZPV001',
-    sideNumber: 'Z3-PVAN-01',
-    color: 'White',
-    type: 'TRUCK',
-    picture: {
-      id: 'e7ace1de-ab7f-4120-922d-23441a041bd9',
-      name: 'e7ace1de-ab7f-4120-922d-23441a041bd9',
-      extension: null,
-      contentType: null,
-    },
-    rangeKm: 193,
-    batteryLevelPct: 98,
-    reservationEnd: null,
-    reservation: null,
-    status: 'AVAILABLE',
-    locationDescription: null,
-    address: null,
-    mapColor: {
-      rgb: 'ffffff',
-      alpha: 0.5,
-    },
-    promotion: null,
-    id: '00000000-0000-0000-0005-000000000003',
-    name: 'Enigma Python Van',
-    description: null,
-    location: {
-      latitude: 52.1935161702226,
-      longitude: 20.9304286193486,
-    },
-    metadata: null,
+function generateMarkerPopupsContent(item: {
+  discriminator: string;
+  status: string;
+  name: string;
+  sideNumber: string;
+  description: string;
+  address: {
+    street: string;
+    house: string;
   };
-  const secondVehicle: Vehicle = {
-    discriminator: 'vehicle',
-    platesNumber: 'WZ8748W',
-    sideNumber: 'Z1-WH-01',
-    color: 'White',
-    type: 'CAR',
-    picture: {
-      id: '9818875c-9e8b-4dc5-98ae-5909a8d632e2',
-      name: '9818875c-9e8b-4dc5-98ae-5909a8d632e2',
-      extension: null,
-      contentType: null,
-    },
-    rangeKm: 134,
-    batteryLevelPct: 86,
-    reservationEnd: null,
-    reservation: null,
-    status: 'AVAILABLE',
-    locationDescription: null,
-    address: null,
-    mapColor: {
-      rgb: 'ffffff',
-      alpha: 0.5,
-    },
-    promotion: null,
-    id: '00000000-0000-0000-0005-000000000001',
-    name: 'Nissan Leaf White',
-    description: null,
-    location: {
-      latitude: 52.193275,
-      longitude: 20.930372,
-    },
-    metadata: null,
-  };
-  const thirdVehicle: Vehicle = {
-    discriminator: 'vehicle',
-    platesNumber: 'WZPC001',
-    sideNumber: 'Z4-PCAR-01',
-    color: 'White',
-    type: 'CAR',
-    picture: {
-      id: '61133b4c-2e9b-4da9-b22c-009baad8eadd',
-      name: '61133b4c-2e9b-4da9-b22c-009baad8eadd',
-      extension: null,
-      contentType: null,
-    },
-    rangeKm: 193,
-    batteryLevelPct: 98,
-    reservationEnd: null,
-    reservation: null,
-    status: 'AVAILABLE',
-    locationDescription: null,
-    address: null,
-    mapColor: {
-      rgb: 'ffffff',
-      alpha: 0.5,
-    },
-    promotion: null,
-    id: '00000000-0000-0000-0005-000000000004',
-    name: 'Enigma Python Car',
-    description: null,
-    location: {
-      latitude: 52.193891367697,
-      longitude: 20.930564789789,
-    },
-    metadata: null,
-  };
+  spacesCount: number;
+  availableSpacesCount: number;
+}): ((layer: L.Layer) => L.Content) | L.Content | L.Popup {
+  const firstLine =
+    item.discriminator === 'vehicle'
+      ? item.name
+      : item.discriminator === 'poi'
+      ? item.description
+      : item.discriminator === 'parking'
+      ? `Parking ${item.address.street} ${item.address.house}`
+      : '';
 
-  veh.push(firstVehicle, secondVehicle, thirdVehicle);
+  const secondLine =
+    item.discriminator === 'vehicle'
+      ? `${item.sideNumber} ${item.status}`
+      : item.discriminator === 'poi'
+      ? ''
+      : item.discriminator === 'parking'
+      ? `Available ${item.availableSpacesCount} of ${item.spacesCount}`
+      : '';
 
-  addCustomMarkers(
-    veh.map((v) => {
-      return { lat: v.location.latitude, lng: v.location.longitude };
-    }),
-    map
-  );
+  // ? item.status === 'AVAILABLE'
+  // ? 'Available'
+  // : 'Not available'
+
+  return `${firstLine}\n${secondLine}`;
+}
+
+function generateMarkersIcon(item: {
+  lat: number;
+  lng: number;
+  discriminator: string;
+  status: string;
+}): L.IconOptions {
+  return {
+    iconUrl:
+      item.discriminator === 'parking'
+        ? 'assets/parking.png'
+        : item.discriminator === 'poi'
+        ? 'assets/poi.png'
+        : item.status === 'AVAILABLE'
+        ? 'assets/availableVehicle.png'
+        : 'assets/vehicle.png',
+    iconSize: [25, 39],
+    iconAnchor: [12, 39],
+  };
 }
 
 export interface VehiclesWrapper {

@@ -4,4 +4,6 @@ export interface Poi {
     latitude: number;
     longitude: number;
   };
+  description: string;
+  name: string;
 }
