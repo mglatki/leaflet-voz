@@ -1,4 +1,5 @@
 import * as L from 'leaflet';
+import { CustomMarker } from '../models/CustomMarker';
 import { Parking } from '../models/Parking';
 import { Poi } from '../models/Poi';
 import { Vehicle } from '../models/Vehicle';
@@ -23,22 +24,8 @@ export function addVehicleMarkersToClusterGroup(
   map: L.Map
 ) {
   addCustomMarkersToClusterGroup(
-    veh.map((v) => {
-      return {
-        lat: v.location.latitude,
-        lng: v.location.longitude,
-        discriminator: v.discriminator,
-        status: v.status,
-        name: v.name,
-        sideNumber: v.sideNumber,
-        description: '',
-        address: {
-          street: '',
-          house: '',
-        },
-        spacesCount: 0,
-        availableSpacesCount: 0,
-      };
+    veh.map((vehicle) => {
+      return createCustomMarkerFromVehicle(vehicle);
     }),
     map
   );
@@ -49,22 +36,8 @@ export function addPOIMarkersToClusterGroup(
   map: L.Map
 ) {
   addCustomMarkersToClusterGroup(
-    pois.map((p) => {
-      return {
-        lat: p.location.latitude,
-        lng: p.location.longitude,
-        discriminator: p.discriminator,
-        status: '',
-        name: p.name,
-        sideNumber: '',
-        description: p.description,
-        address: {
-          street: '',
-          house: '',
-        },
-        spacesCount: 0,
-        availableSpacesCount: 0,
-      };
+    pois.map((poi) => {
+      return createCustomMarkerFromPOI(poi);
     }),
     map
   );
@@ -75,43 +48,69 @@ export function addParkingMarkersToClusterGroup(
   map: L.Map
 ) {
   addCustomMarkersToClusterGroup(
-    parkings.map((p) => {
-      return {
-        lat: p.location.latitude,
-        lng: p.location.longitude,
-        discriminator: p.discriminator,
-        status: '',
-        name: '',
-        sideNumber: '',
-        description: '',
-        address: {
-          street: p.address.street,
-          house: p.address.house,
-        },
-        spacesCount: p.spacesCount,
-        availableSpacesCount: p.availableSpacesCount,
-      };
+    parkings.map((parking) => {
+      return createCustomMarkerFromParking(parking);
     }),
     map
   );
 }
 
-export function addCustomMarkersToClusterGroup(
-  markers: Array<{
-    lat: number;
-    lng: number;
-    discriminator: string;
-    status: string;
-    name: string;
-    sideNumber: string;
-    description: string;
+export function createCustomMarkerFromParking(parking: Parking): CustomMarker {
+      return {
+    lat: parking.location.latitude,
+    lng: parking.location.longitude,
+    discriminator: parking.discriminator,
+        status: '',
+        name: '',
+        sideNumber: '',
+        description: '',
+        address: {
+      street: parking.address.street,
+      house: parking.address.house,
+        },
+    spacesCount: parking.spacesCount,
+    availableSpacesCount: parking.availableSpacesCount,
+      };
+}
+
+export function createCustomMarkerFromPOI(poi: Poi): CustomMarker {
+  return {
+    lat: poi.location.latitude,
+    lng: poi.location.longitude,
+    discriminator: poi.discriminator,
+    status: '',
+    name: poi.name,
+    sideNumber: '',
+    description: poi.description,
     address: {
-      street: string;
-      house: string;
+      street: '',
+      house: '',
+    },
+    spacesCount: 0,
+    availableSpacesCount: 0,
     };
-    spacesCount: number;
-    availableSpacesCount: number;
-  }>,
+}
+
+export function createCustomMarkerFromVehicle(vehicle: Vehicle): CustomMarker {
+  return {
+    lat: vehicle.location.latitude,
+    lng: vehicle.location.longitude,
+    discriminator: vehicle.discriminator,
+    status: vehicle.status,
+    name: vehicle.name,
+    sideNumber: vehicle.sideNumber,
+    description: '',
+    address: {
+      street: '',
+      house: '',
+    },
+    spacesCount: 0,
+    availableSpacesCount: 0,
+  };
+}
+
+export function addCustomMarkersToClusterGroup(
+  markers: Array<CustomMarker>,
   map: L.Map
 ): L.MarkerClusterGroup {
   const markerClusterGroup = L.markerClusterGroup({
