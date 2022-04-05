@@ -56,21 +56,21 @@ export function addParkingMarkersToClusterGroup(
 }
 
 export function createCustomMarkerFromParking(parking: Parking): CustomMarker {
-      return {
+  return {
     lat: parking.location.latitude,
     lng: parking.location.longitude,
     discriminator: parking.discriminator,
-        status: '',
-        name: '',
-        sideNumber: '',
-        description: '',
-        address: {
+    status: '',
+    name: '',
+    sideNumber: '',
+    description: '',
+    address: {
       street: parking.address.street,
       house: parking.address.house,
-        },
+    },
     spacesCount: parking.spacesCount,
     availableSpacesCount: parking.availableSpacesCount,
-      };
+  };
 }
 
 export function createCustomMarkerFromPOI(poi: Poi): CustomMarker {
@@ -88,7 +88,7 @@ export function createCustomMarkerFromPOI(poi: Poi): CustomMarker {
     },
     spacesCount: 0,
     availableSpacesCount: 0,
-    };
+  };
 }
 
 export function createCustomMarkerFromVehicle(vehicle: Vehicle): CustomMarker {
@@ -120,7 +120,7 @@ export function addCustomMarkersToClusterGroup(
   markers.map((item) => {
     const newIcon = L.icon(generateMarkersIcon(item));
     const popup = item.discriminator;
-    console.log(popup);
+    // console.log(popup);
     markerClusterGroup.addLayer(
       L.marker([item.lat, item.lng], { icon: newIcon }).bindPopup(
         generateMarkerPopupsContent(item)
@@ -173,12 +173,7 @@ function generateMarkerPopupsContent(
   return `${firstLine}<br>${secondLine}`;
 }
 
-function generateMarkersIcon(item: {
-  lat: number;
-  lng: number;
-  discriminator: string;
-  status: string;
-}): L.IconOptions {
+function generateMarkersIcon(item: CustomMarker): L.IconOptions {
   return {
     iconUrl:
       item.discriminator === parkingString
