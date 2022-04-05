@@ -131,36 +131,44 @@ export function addCustomMarkersToClusterGroup(
   return markerClusterGroup.addTo(map);
 }
 
-function generateMarkerPopupsContent(item: {
-  discriminator: string;
-  status: string;
-  name: string;
-  sideNumber: string;
-  description: string;
-  address: {
-    street: string;
-    house: string;
-  };
-  spacesCount: number;
-  availableSpacesCount: number;
-}): ((layer: L.Layer) => L.Content) | L.Content | L.Popup {
-  const firstLine =
-    item.discriminator === vehicleString
-      ? item.name
-      : item.discriminator === poiString
-      ? item.description
-      : item.discriminator === parkingString
-      ? `Parking ${item.address.street} ${item.address.house}`
-      : '';
+function generateMarkerPopupsContent(
+  item: CustomMarker
+): ((layer: L.Layer) => L.Content) | L.Content | L.Popup {
+  let firstLine = '';
 
-  const secondLine =
-    item.discriminator === vehicleString
-      ? `${item.sideNumber} ${item.status}`
-      : item.discriminator === poiString
-      ? ''
-      : item.discriminator === parkingString
-      ? `Available ${item.availableSpacesCount} of ${item.spacesCount}`
-      : '';
+  switch (item.discriminator) {
+    case vehicleString:
+      firstLine = item.name;
+      break;
+    case poiString:
+      firstLine = item.description;
+      break;
+    case parkingString:
+      firstLine = `Parking ${item.address.street} ${item.address.house}`;
+      break;
+
+    default:
+      firstLine = '';
+      break;
+  }
+
+  let secondLine = '';
+
+  switch (item.discriminator) {
+    case vehicleString:
+      secondLine = `${item.sideNumber} ${item.status}`;
+      break;
+    case poiString:
+      secondLine = '';
+      break;
+    case parkingString:
+      secondLine = `Available ${item.availableSpacesCount} of ${item.spacesCount}`;
+      break;
+
+    default:
+      secondLine = '';
+      break;
+  }
 
   return `${firstLine}<br>${secondLine}`;
 }
