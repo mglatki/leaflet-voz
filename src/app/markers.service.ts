@@ -7,10 +7,14 @@ import {
   addParkingMarkersToClusterGroup,
   addPOIMarkersToClusterGroup,
   addVehicleMarkersToClusterGroup,
+  createCustomMarkerFromVehicle,
+  createCustomMarkerFromPOI,
+  createCustomMarkerFromParking,
   ParkingsWrapper,
   PoisWrapper,
   VehiclesWrapper,
 } from './helpers/helpers';
+import { CustomMarker } from './models/CustomMarker';
 
 @Injectable({
   providedIn: 'root',
@@ -27,21 +31,7 @@ export class MarkersService {
   parkingString: string = 'parking';
 
   respObjectsArray: Array<any> | undefined;
-  markers: {
-    lat: number;
-    lng: number;
-    discriminator: string;
-    status: string;
-    name: string;
-    sideNumber: string;
-    description: string;
-    address: {
-      street: string;
-      house: string;
-    };
-    spacesCount: number;
-    availableSpacesCount: number;
-  }[] = [];
+  markers: CustomMarker[] = [];
   markersClustersGroup: L.MarkerClusterGroup | undefined;
 
   constructor(private http: HttpClient) {}
@@ -70,37 +60,52 @@ export class MarkersService {
   private mapRespToMarkers(arr: Array<any>) {
     if (arr)
       this.markers = arr.map((item) => {
-        return {
-          lat: item.location.latitude,
-          lng: item.location.longitude,
-          discriminator: item.discriminator,
-          status: item.discriminator === this.vehicleString ? item.status : '',
-          name:
-            item.discriminator === this.vehicleString ||
-            item.discriminator === this.vehicleString
-              ? item.name
-              : '',
-          sideNumber:
-            item.discriminator === this.vehicleString ? item.sideNumber : '',
-          description:
-            item.discriminator !== this.vehicleString ? item.description : '',
-          address:
-            item.discriminator === this.parkingString
-              ? {
-                  street: item.address.street,
-                  house: item.address.house,
-                }
-              : {
-                  street: '',
-                  house: '',
-                },
-          spacesCount:
-            item.discriminator === this.parkingString ? item.spacesCount : 0,
-          availableSpacesCount:
-            item.discriminator === this.parkingString
-              ? item.availableSpacesCount
-              : 0,
-        };
+        // return {
+        //   lat: item.location.latitude,
+        //   lng: item.location.longitude,
+        //   discriminator: item.discriminator,
+        //   status: item.discriminator === this.vehicleString ? item.status : '',
+        //   name:
+        //     item.discriminator === this.vehicleString ||
+        //     item.discriminator === this.poiString
+        //       ? item.name
+        //       : '',
+        //   sideNumber:
+        //     item.discriminator === this.vehicleString ? item.sideNumber : '',
+        //   description:
+        //     item.discriminator !== this.vehicleString ? item.description : '',
+        //   address:
+        //     item.discriminator === this.parkingString
+        //       ? {
+        //           street: item.address.street,
+        //           house: item.address.house,
+        //         }
+        //       : {
+        //           street: '',
+        //           house: '',
+        //         },
+        //   spacesCount:
+        //     item.discriminator === this.parkingString ? item.spacesCount : 0,
+        //   availableSpacesCount:
+        //     item.discriminator === this.parkingString
+        //       ? item.availableSpacesCount
+        //       : 0,
+        // };
+        switch (item.discriminator) {
+          case this.vehicleString:
+            return createCustomMarkerFromVehicle(item);
+            break;
+          case this.poiString:
+            return createCustomMarkerFromPOI(item);
+            break;
+          case this.parkingString:
+            return createCustomMarkerFromParking(item);
+            break;
+
+          default:
+            return createCustomMarkerFromParking(item);
+            break;
+        }
       });
   }
 
