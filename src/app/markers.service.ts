@@ -15,6 +15,7 @@ import {
   VehiclesWrapper,
 } from './helpers/helpers';
 import { CustomMarker } from './models/CustomMarker';
+import { getVehiclesMockup } from './services/markers.service.mockup';
 
 @Injectable({
   providedIn: 'root',
@@ -56,55 +57,28 @@ export class MarkersService {
       );
     });
   }
+  makeClusterGroupFromMockedData(map: L.Map): void {
+    this.mapRespToMarkers(getVehiclesMockup());
+
+    this.markersClustersGroup = addCustomMarkersToClusterGroup(
+      this.markers,
+      map
+    );
+  }
 
   private mapRespToMarkers(arr: Array<any>) {
     if (arr)
       this.markers = arr.map((item) => {
-        // return {
-        //   lat: item.location.latitude,
-        //   lng: item.location.longitude,
-        //   discriminator: item.discriminator,
-        //   status: item.discriminator === this.vehicleString ? item.status : '',
-        //   name:
-        //     item.discriminator === this.vehicleString ||
-        //     item.discriminator === this.poiString
-        //       ? item.name
-        //       : '',
-        //   sideNumber:
-        //     item.discriminator === this.vehicleString ? item.sideNumber : '',
-        //   description:
-        //     item.discriminator !== this.vehicleString ? item.description : '',
-        //   address:
-        //     item.discriminator === this.parkingString
-        //       ? {
-        //           street: item.address.street,
-        //           house: item.address.house,
-        //         }
-        //       : {
-        //           street: '',
-        //           house: '',
-        //         },
-        //   spacesCount:
-        //     item.discriminator === this.parkingString ? item.spacesCount : 0,
-        //   availableSpacesCount:
-        //     item.discriminator === this.parkingString
-        //       ? item.availableSpacesCount
-        //       : 0,
-        // };
         switch (item.discriminator) {
           case this.vehicleString:
             return createCustomMarkerFromVehicle(item);
-            break;
           case this.poiString:
             return createCustomMarkerFromPOI(item);
-            break;
           case this.parkingString:
             return createCustomMarkerFromParking(item);
-            break;
 
           default:
             return createCustomMarkerFromParking(item);
-            break;
         }
       });
   }
