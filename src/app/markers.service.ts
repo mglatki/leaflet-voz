@@ -58,7 +58,9 @@ export class MarkersService {
     });
   }
   makeClusterGroupFromMockedData(map: L.Map): void {
-    this.mapRespToMarkers(getVehiclesMockup());
+    this.respObjectsArray = getVehiclesMockup();
+
+    this.mapRespToMarkers(this.respObjectsArray);
 
     this.markersClustersGroup = addCustomMarkersToClusterGroup(
       this.markers,
